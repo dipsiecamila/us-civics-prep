@@ -1,6 +1,7 @@
 package com.example.data.model
 
 data class N400PersonalProfile(
+    val gender: String = "Male", // "Male" or "Female"
     val fullName: String = "",
     val age: String = "",
     val dateOfBirth: String = "",
@@ -23,6 +24,9 @@ data class N400PersonalProfile(
     val yearsAsPermanentResident: String = "",
     val residenceStateCode: String = "CA"
 ) {
+    val isMale: Boolean
+        get() = gender.equals("Male", ignoreCase = true) || gender.equals("Masculino", ignoreCase = true)
+
     val isComplete: Boolean
         get() = fullName.isNotBlank() || age.isNotBlank() || countryOfBirth.isNotBlank()
 

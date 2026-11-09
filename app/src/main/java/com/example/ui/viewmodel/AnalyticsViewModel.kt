@@ -44,6 +44,7 @@ data class CategoryPerformance(
 
 data class IntroQuestionScoreItem(
     val question: IntroductoryQuestion,
+    val resolvedAnswerEn: String,
     val timesCorrect: Int,
     val timesIncorrect: Int,
     val isMastered: Boolean
@@ -77,7 +78,8 @@ data class AnalyticsUiState(
     val personalQuestions: List<IntroQuestionScoreItem> = emptyList(),
     val stateQuestions: List<StateQuestionScoreItem> = emptyList(),
     val all100QuestionsRanked: List<CivicsQuestionScoreItem> = emptyList(),
-    val selectedState: StateInfo = StateDirectory.states.first()
+    val selectedState: StateInfo = StateDirectory.states.first(),
+    val n400Profile: com.example.data.model.N400PersonalProfile = com.example.data.model.N400PersonalProfile()
 )
 
 class AnalyticsViewModel(application: Application) : AndroidViewModel(application) {
@@ -95,6 +97,7 @@ class AnalyticsViewModel(application: Application) : AndroidViewModel(applicatio
         val failedCivicsList = mutableListOf<QuestionFailureStat>()
         val allQuestions = CivicsQuestionsDataSource.allQuestions
         val currentState = repository.getSelectedStateInfo()
+        val n400Profile = repository.getN400Profile()
 
         // Category stats accumulator
         val catMap = mutableMapOf<QuestionCategory, Pair<Int, Int>>()
@@ -144,7 +147,7 @@ class AnalyticsViewModel(application: Application) : AndroidViewModel(applicatio
 
         failedCivicsList.sortByDescending { it.timesIncorrect }
 
-        // Intro Personal Questions list with scores
+        // Intro Personal Questions list with resolved answers and scores
         val failedIntroList = mutableListOf<IntroFailureStat>()
         val personalQuestionsList = IntroductoryInterviewDataSource.questions.map { intro ->
             val ip = introMap[intro.id]
@@ -165,8 +168,12 @@ class AnalyticsViewModel(application: Application) : AndroidViewModel(applicatio
                 )
             }
 
+            val resolved = IntroductoryInterviewDataSource.resolvePersonalSampleAnswersEn(intro.id, n400Profile)
+                .firstOrNull() ?: intro.sampleAnswersEn.firstOrNull().orEmpty()
+
             IntroQuestionScoreItem(
                 question = intro,
+                resolvedAnswerEn = resolved,
                 timesCorrect = c,
                 timesIncorrect = inc,
                 isMastered = mastered
@@ -224,7 +231,8 @@ class AnalyticsViewModel(application: Application) : AndroidViewModel(applicatio
             personalQuestions = personalQuestionsList,
             stateQuestions = stateQuestionsList,
             all100QuestionsRanked = all100Ranked,
-            selectedState = currentState
+            selectedState = currentState,
+            n400Profile = n400Profile
         )
     }.stateIn(
         viewModelScope,
@@ -234,6 +242,10 @@ class AnalyticsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun speak(text: String) {
         ttsManager.speak(text)
+    }
+
+    fun speakUserAnswer(text: String, isMale: Boolean) {
+        ttsManager.speakUserAnswer(text, isMale)
     }
 
     override fun onCleared() {

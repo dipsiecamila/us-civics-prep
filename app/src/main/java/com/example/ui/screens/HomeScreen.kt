@@ -150,11 +150,13 @@ fun HomeScreen(
 
                             Text(
                                 text = AppStrings.heroTitle(lang),
-                                style = MaterialTheme.typography.headlineMedium.copy(
-                                    color = Color.White,
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontSize = 18.sp,
+                                    lineHeight = 22.sp,
                                     fontWeight = FontWeight.ExtraBold,
-                                    lineHeight = 30.sp
-                                )
+                                    color = Color.White
+                                ),
+                                maxLines = 2
                             )
 
                             Spacer(modifier = Modifier.height(6.dp))
@@ -392,8 +394,6 @@ fun HomeScreen(
                 title = AppStrings.moduleEnglishTitle(lang),
                 subtitle = AppStrings.moduleEnglishSubtitle(lang),
                 icon = Icons.Default.RecordVoiceOver,
-                badge = "Part 2 & 3",
-                badgeColor = MaterialTheme.colorScheme.tertiaryContainer,
                 onClick = onNavigateEnglish,
                 testTag = "card_english_feature"
             )
@@ -517,8 +517,8 @@ private fun TrainingFeatureCard(
     title: String,
     subtitle: String,
     icon: ImageVector,
-    badge: String,
-    badgeColor: Color,
+    badge: String? = null,
+    badgeColor: Color = Color.Transparent,
     onClick: () -> Unit,
     testTag: String
 ) {
@@ -559,19 +559,21 @@ private fun TrainingFeatureCard(
                         text = title,
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Surface(
-                        shape = RoundedCornerShape(6.dp),
-                        color = badgeColor
-                    ) {
-                        Text(
-                            text = badge,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 10.sp
+                    if (!badge.isNullOrBlank()) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = badgeColor
+                        ) {
+                            Text(
+                                text = badge,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 10.sp
+                                )
                             )
-                        )
+                        }
                     }
                 }
 

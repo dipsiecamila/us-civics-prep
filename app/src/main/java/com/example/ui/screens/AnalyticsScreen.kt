@@ -240,7 +240,7 @@ fun AnalyticsScreen(
             PersonalQuestionScoreRow(
                 item = item,
                 onSpeak = {
-                    val fullAudio = "${item.question.questionEn}. Answer: ${item.question.sampleAnswersEn.joinToString(separator = ", or ")}"
+                    val fullAudio = "${item.question.questionEn}. Answer: ${item.resolvedAnswerEn}"
                     viewModel.speak(fullAudio)
                 }
             )
@@ -491,7 +491,7 @@ private fun PersonalQuestionScoreRow(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Sample: \"${item.question.sampleAnswersEn.firstOrNull().orEmpty()}\"",
+                text = "Sample: \"${item.resolvedAnswerEn}\"",
                 style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
             )
         }

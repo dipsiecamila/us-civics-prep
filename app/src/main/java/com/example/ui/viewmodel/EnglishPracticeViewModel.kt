@@ -27,6 +27,7 @@ data class WritingCheckResult(
 )
 
 class EnglishPracticeViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = com.example.data.repository.CivicsRepository(application)
     val ttsManager = TtsManager(application)
 
     private val _state = MutableStateFlow(EnglishPracticeState())
@@ -42,7 +43,8 @@ class EnglishPracticeViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun speak(text: String) {
-        ttsManager.speak(text)
+        val profile = repository.getN400Profile()
+        ttsManager.speakUserAnswer(text, profile.isMale)
     }
 
     fun onWritingInputChanged(input: String) {

@@ -54,7 +54,8 @@ fun LanguageSelectorMenu(
     Box(modifier = modifier) {
         Surface(
             shape = RoundedCornerShape(12.dp),
-            color = Color(0xFFE0E7FF), // Gentle pastel sky blue - never red
+            color = Color(0xFFE2E8F0), // Discreet, readable neutral gray
+            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1)),
             modifier = Modifier.testTag("language_selector_pill")
         ) {
             Row(
@@ -77,22 +78,22 @@ fun LanguageSelectorMenu(
                     Icon(
                         imageVector = Icons.Default.Language,
                         contentDescription = "Language",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        tint = Color(0xFF334155),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = currentLanguage.nativeName,
-                        style = MaterialTheme.typography.labelLarge.copy(
+                        style = MaterialTheme.typography.labelMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            color = Color(0xFF334155)
                         )
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         imageVector = Icons.Default.SwapHoriz,
                         contentDescription = "Quick Toggle Español/English",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
+                        tint = Color(0xFF64748B),
                         modifier = Modifier.size(14.dp)
                     )
                 }
@@ -109,7 +110,7 @@ fun LanguageSelectorMenu(
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "Open 20 languages menu",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        tint = Color(0xFF334155),
                         modifier = Modifier.size(20.dp)
                     )
                 }

@@ -53,7 +53,8 @@ fun OfficerSelectorMenu(
     Box(modifier = modifier) {
         Surface(
             shape = RoundedCornerShape(12.dp),
-            color = Color(0xFFE0E7FF), // Gentle soft sky blue
+            color = Color(0xFFE2E8F0), // Discreet, readable neutral gray
+            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCBD5E1)),
             modifier = Modifier
                 .bounceClick { expanded = true }
                 .testTag("officer_selector_pill")
@@ -71,13 +72,13 @@ fun OfficerSelectorMenu(
                     text = currentOfficer.displayName.replace("Officer ", ""),
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = Color(0xFF334155)
                     )
                 )
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Select Officer",
-                    tint = Color(0xFF1E293B),
+                    tint = Color(0xFF334155),
                     modifier = Modifier.size(18.dp)
                 )
             }

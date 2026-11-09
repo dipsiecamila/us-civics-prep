@@ -76,27 +76,29 @@ object AppStrings {
         else -> "Cards"
     }
 
-    fun navQuestions(lang: AppLanguage): String = when (lang) {
-        AppLanguage.SPANISH -> "100 Cívica"
-        AppLanguage.CHINESE -> "100 公民題"
-        AppLanguage.TAGALOG -> "100 Sibika"
-        AppLanguage.VIETNAMESE -> "100 Công dân"
-        AppLanguage.ARABIC -> "100 سؤال مدني"
-        AppLanguage.FRENCH -> "100 Civiques"
-        AppLanguage.KOREAN -> "100 시민권"
-        AppLanguage.RUSSIAN -> "100 Вопросов"
-        AppLanguage.HAITIAN_CREOLE -> "100 Sivik"
-        AppLanguage.GERMAN -> "100 Bürgerkunde"
-        AppLanguage.HINDI -> "100 नागरिक शास्त्र"
-        AppLanguage.PORTUGUESE -> "100 Cívica"
-        AppLanguage.ITALIAN -> "100 Civica"
-        AppLanguage.POLISH -> "100 Pytań"
-        AppLanguage.JAPANESE -> "公民100問"
-        AppLanguage.PERSIAN -> "۱۰۰ سوال مدنی"
-        AppLanguage.GUJARATI -> "100 પ્રશ્નો"
-        AppLanguage.TELUGU -> "100 ప్రశ్నలు"
-        AppLanguage.BENGALI -> "১০০ প্রশ্ন"
-        else -> "100 Civics"
+    fun navQuestions(lang: AppLanguage, count: Int = 100): String = when (lang) {
+        AppLanguage.SPANISH -> "$count Cívica"
+        AppLanguage.CHINESE -> "$count 公民題"
+        AppLanguage.TAGALOG -> "$count Sibika"
+        AppLanguage.VIETNAMESE -> "$count Công dân"
+        AppLanguage.ARABIC -> "$count سؤال مدني"
+        AppLanguage.FRENCH -> "$count Civiques"
+        AppLanguage.KOREAN -> "$count 시민권"
+        AppLanguage.RUSSIAN -> "$count Вопросов"
+        AppLanguage.HAITIAN_CREOLE -> "$count Sivik"
+        AppLanguage.GERMAN -> "$count Bürgerkunde"
+        AppLanguage.HINDI -> "$count नागरिक शास्त्र"
+        AppLanguage.PORTUGUESE -> "$count Cívica"
+        AppLanguage.ITALIAN -> "$count Civica"
+        AppLanguage.POLISH -> "$count Pytań"
+        AppLanguage.JAPANESE -> "公民${count}問"
+        AppLanguage.PERSIAN -> "$count سوال مدنی"
+        AppLanguage.GUJARATI -> "$count પ્રશ્નો"
+        AppLanguage.TELUGU -> "$count ప్రశ్నలు"
+        AppLanguage.BENGALI -> "$count প্রশ্ন"
+        AppLanguage.SWAHILI -> "$count Sivika"
+        AppLanguage.ESPERANTO -> "$count Civiko"
+        else -> "$count Civics"
     }
 
     fun navEnglish(lang: AppLanguage): String = when (lang) {
@@ -757,6 +759,22 @@ object AppStrings {
         else -> "USCIS Official 100 Civics Questions Exam Active"
     }
 
+    fun civicsExamActive6520Title(lang: AppLanguage): String = when (lang) {
+        AppLanguage.SPANISH -> "Examen Especial 65/20 de 20 Preguntas Cívicas Activo"
+        AppLanguage.FRENCH -> "Examen spécial 65/20 de 20 questions civiques actif"
+        AppLanguage.CHINESE -> "USCIS 官方 65/20 特殊條款 20 道公民常識考試已就緒"
+        AppLanguage.VIETNAMESE -> "Bài thi đặc biệt 65/20 gồm 20 câu hỏi công dân đang hoạt động"
+        AppLanguage.TAGALOG -> "Aktibo ang Espesyal na 65/20 ng 20 Sibika Pagsusulit"
+        AppLanguage.ARABIC -> "اختبار الـ 20 سؤالاً المدني الخاص 65/20 نشط"
+        AppLanguage.PORTUGUESE -> "Exame Especial 65/20 de 20 Questões Cívicas Ativo"
+        AppLanguage.RUSSIAN -> "Специальный экзамен 65/20 из 20 вопросов активен"
+        AppLanguage.KOREAN -> "공식 USCIS 65/20 특례 20개 시민권 시험 모드 활성화됨"
+        AppLanguage.GERMAN -> "Sonderprüfung 65/20 mit 20 Bürgerkundefragen aktiv"
+        AppLanguage.ITALIAN -> "Esame speciale 65/20 di 20 domande civiche attivo"
+        AppLanguage.HAITIAN_CREOLE -> "Egzamen Espesyal 65/20 ak 20 Kesyon Sivik la Aktif"
+        else -> "USCIS Official 20 Civics Questions 65/20 Special Exam Active"
+    }
+
     fun civicsExamActiveSubtitle(stateName: String, lang: AppLanguage): String = when (lang) {
         AppLanguage.SPANISH -> "Personalizado automáticamente con el gobernador, senadores y capital de $stateName."
         AppLanguage.FRENCH -> "Personnalisé automatiquement avec le gouverneur, les sénateurs et la capitale de $stateName."
@@ -771,6 +789,20 @@ object AppStrings {
         AppLanguage.ITALIAN -> "Personalizzato automaticamente con governatore, senatori e capitale di $stateName."
         AppLanguage.HAITIAN_CREOLE -> "Otomatikman pèsonalize ak gouvènè, senatè ak kapital $stateName."
         else -> "Automatically customized with governor, senators, and capital of $stateName."
+    }
+
+    fun civicsExamActive6520Subtitle(stateName: String, lang: AppLanguage): String = when (lang) {
+        AppLanguage.SPANISH -> "Exención 65/20: solo estudiarás las 20 preguntas seleccionadas por USCIS con los oficiales de $stateName."
+        AppLanguage.FRENCH -> "Dispense 65/20 : vous étudierez uniquement les 20 questions sélectionnées par l'USCIS pour $stateName."
+        AppLanguage.CHINESE -> "65/20 特殊條例：您只需學習由 USCIS 精選的 20 道公民題目（含 $stateName 專題）。"
+        AppLanguage.VIETNAMESE -> "Miễn trừ 65/20: Bạn chỉ cần học 20 câu hỏi được USCIS chỉ định cho $stateName."
+        AppLanguage.TAGALOG -> "Exemption 65/20: Pag-aaralan mo lang ang 20 tanong na pinili ng USCIS para sa $stateName."
+        AppLanguage.ARABIC -> "إعفاء 65/20: ستدرس فقط الـ 20 سؤالاً المحددة من USCIS مع مسؤولي $stateName."
+        AppLanguage.PORTUGUESE -> "Isenção 65/20: você só estudará as 20 questões selecionadas pelo USCIS com os oficiais de $stateName."
+        AppLanguage.RUSSIAN -> "Льгота 65/20: вы будете изучать только 20 вопросов, отобранных USCIS для $stateName."
+        AppLanguage.KOREAN -> "65/20 특별 면제: $stateName 공직자 정보를 포함하여 USCIS가 지정한 20개 질문만 공부합니다."
+        AppLanguage.GERMAN -> "65/20-Regelung: Sie lernen nur die 20 von der USCIS ausgewählten Fragen für $stateName."
+        else -> "65/20 Exemption: You will only study the 20 designated USCIS questions customized for $stateName."
     }
 
     fun oralPracticeScrollCue(lang: AppLanguage): String = when (lang) {

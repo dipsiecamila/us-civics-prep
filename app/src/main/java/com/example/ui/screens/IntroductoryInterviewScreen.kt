@@ -75,6 +75,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.ui.components.CivicsDatePicker
 import com.example.ui.components.EnglishSpeechInput
@@ -106,6 +107,10 @@ import com.example.ui.util.AppStrings
 import com.example.util.AVAILABLE_OFFICER_VOICES
 import com.example.util.TtsManager
 import kotlinx.coroutines.launch
+
+private fun String.capitalizeWords(): String = this.split(" ").joinToString(" ") { word ->
+    word.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+}
 
 @Composable
 fun IntroductoryInterviewScreen(
@@ -404,13 +409,51 @@ private fun N400WrittenFormContent(
 
                     OutlinedTextField(
                         value = profile.fullName,
-                        onValueChange = { onProfileChange(profile.copy(fullName = it)) },
+                        onValueChange = { onProfileChange(profile.copy(fullName = it.capitalizeWords())) },
                         label = { Text(AppStrings.n400FullNameLabel(language)) },
                         placeholder = { Text("e.g. Carlos Eduardo Rodriguez") },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Words,
+                            imeAction = ImeAction.Next
+                        ),
                         keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
                         modifier = Modifier.fillMaxWidth().testTag("n400_input_name")
                     )
+
+                    // Gender Selection: Masculino / Femenino
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = if (language == AppLanguage.SPANISH) "Sexo" else "Sex / Gender",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            val isMale = profile.isMale
+                            FilterChip(
+                                selected = isMale,
+                                onClick = { onProfileChange(profile.copy(gender = "Male")) },
+                                label = {
+                                    Text(
+                                        text = if (language == AppLanguage.SPANISH) "👨 Masculino" else "👨 Male",
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                },
+                                modifier = Modifier.weight(1f).testTag("gender_male_chip")
+                            )
+                            FilterChip(
+                                selected = !isMale,
+                                onClick = { onProfileChange(profile.copy(gender = "Female")) },
+                                label = {
+                                    Text(
+                                        text = if (language == AppLanguage.SPANISH) "👩 Femenino" else "👩 Female",
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                },
+                                modifier = Modifier.weight(1f).testTag("gender_female_chip")
+                            )
+                        }
+                    }
 
                     CivicsDatePicker(
                         label = AppStrings.n400DobLabel(language),
@@ -545,20 +588,20 @@ private fun N400WrittenFormContent(
 
                     OutlinedTextField(
                         value = profile.fatherName,
-                        onValueChange = { onProfileChange(profile.copy(fatherName = it)) },
+                        onValueChange = { onProfileChange(profile.copy(fatherName = it.capitalizeWords())) },
                         label = { Text(AppStrings.n400FatherNameLabel(language)) },
                         placeholder = { Text("e.g. Juan Carlos Rodriguez") },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
                         modifier = Modifier.fillMaxWidth().testTag("n400_input_father")
                     )
 
                     OutlinedTextField(
                         value = profile.motherName,
-                        onValueChange = { onProfileChange(profile.copy(motherName = it)) },
+                        onValueChange = { onProfileChange(profile.copy(motherName = it.capitalizeWords())) },
                         label = { Text(AppStrings.n400MotherNameLabel(language)) },
                         placeholder = { Text("e.g. Maria Elena Gomez") },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
                         modifier = Modifier.fillMaxWidth().testTag("n400_input_mother")
                     )
@@ -570,7 +613,10 @@ private fun N400WrittenFormContent(
                                 FilterChip(
                                     modifier = Modifier.weight(1f),
                                     selected = profile.maritalStatus.equals(status, ignoreCase = true),
-                                    onClick = { onProfileChange(profile.copy(maritalStatus = status)) },
+                                    onClick = {
+                                        val clearSpouse = if (!status.equals("Married", true)) "" else profile.spouseName
+                                        onProfileChange(profile.copy(maritalStatus = status, spouseName = clearSpouse))
+                                    },
                                     label = {
                                         Text(
                                             text = AppStrings.n400MaritalStatusLabel(status, language),
@@ -586,7 +632,9 @@ private fun N400WrittenFormContent(
                                 FilterChip(
                                     modifier = Modifier.weight(1f),
                                     selected = profile.maritalStatus.equals(status, ignoreCase = true),
-                                    onClick = { onProfileChange(profile.copy(maritalStatus = status)) },
+                                    onClick = {
+                                        onProfileChange(profile.copy(maritalStatus = status, spouseName = ""))
+                                    },
                                     label = {
                                         Text(
                                             text = AppStrings.n400MaritalStatusLabel(status, language),
@@ -602,10 +650,10 @@ private fun N400WrittenFormContent(
                     if (profile.maritalStatus.equals("Married", ignoreCase = true)) {
                         OutlinedTextField(
                             value = profile.spouseName,
-                            onValueChange = { onProfileChange(profile.copy(spouseName = it)) },
+                            onValueChange = { onProfileChange(profile.copy(spouseName = it.capitalizeWords())) },
                             label = { Text(AppStrings.n400SpouseNameLabel(language)) },
                             placeholder = { Text("Elena Gomez") },
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
                             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
                             modifier = Modifier.fillMaxWidth().testTag("n400_input_spouse")
                         )
@@ -664,8 +712,9 @@ private fun N400WrittenFormContent(
                             OutlinedTextField(
                                 value = childCurrentName,
                                 onValueChange = { typedName ->
+                                    val formatted = typedName.capitalizeWords()
                                     val mutableList = (0 until childrenCount).map { idx ->
-                                        if (idx == i) typedName else currentParts.getOrElse(idx) { "" }
+                                        if (idx == i) formatted else currentParts.getOrElse(idx) { "" }
                                     }.toMutableList()
                                     val joined = mutableList.joinToString(", ")
                                     onProfileChange(profile.copy(childrenNames = joined))
@@ -673,7 +722,10 @@ private fun N400WrittenFormContent(
                                 label = { Text(AppStrings.childNameItemLabel(childNumber, language)) },
                                 placeholder = { Text("Child #$childNumber") },
                                 singleLine = true,
-                                keyboardOptions = KeyboardOptions(imeAction = if (i == childrenCount - 1) ImeAction.Done else ImeAction.Next),
+                                keyboardOptions = KeyboardOptions(
+                                    capitalization = KeyboardCapitalization.Words,
+                                    imeAction = if (i == childrenCount - 1) ImeAction.Done else ImeAction.Next
+                                ),
                                 keyboardActions = KeyboardActions(
                                     onNext = { focusManager.moveFocus(FocusDirection.Down) },
                                     onDone = { keyboardController?.hide() }
@@ -860,7 +912,9 @@ private fun N400WrittenFormContent(
                         }
                     }
 
-                    // Confirmation of standard 100 civics questions active
+                    // Confirmation of standard 100 or special 65/20 civics questions active
+                    val qualifies6520 = profile.calculatedAge >= 65 && (profile.yearsAsPermanentResident.filter { it.isDigit() }.toIntOrNull() ?: 0) >= 20
+
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
@@ -881,7 +935,7 @@ private fun N400WrittenFormContent(
                             Spacer(modifier = Modifier.width(10.dp))
                             Column {
                                 Text(
-                                    text = AppStrings.civicsExamActiveTitle(language),
+                                    text = if (qualifies6520) AppStrings.civicsExamActive6520Title(language) else AppStrings.civicsExamActiveTitle(language),
                                     style = MaterialTheme.typography.titleSmall.copy(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -889,7 +943,7 @@ private fun N400WrittenFormContent(
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = AppStrings.civicsExamActiveSubtitle(currentState.name, language),
+                                    text = if (qualifies6520) AppStrings.civicsExamActive6520Subtitle(currentState.name, language) else AppStrings.civicsExamActiveSubtitle(currentState.name, language),
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -970,46 +1024,6 @@ private fun N400PersonalDialoguesContent(
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Text(if (isEs) "Editar Datos" else "Edit Data")
-                    }
-                }
-            }
-        }
-
-        // Voice preview selector right inside the training tab
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        text = if (isEs) "Voz del Oficial de Inmigración (Toca para escuchar al instante)" else "Immigration Officer Voice (Tap to hear immediately)",
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        AVAILABLE_OFFICER_VOICES.forEach { officer ->
-                            val isSelected = officer.id == ttsManager.currentVoice.collectAsStateWithLifecycle().value.id
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = {
-                                    // Plays greeting instantly upon click!
-                                    ttsManager.selectAndPreviewOfficer(officer)
-                                },
-                                label = {
-                                    Text(
-                                        text = com.example.ui.util.AppStrings.officerDisplayName(officer.id, language).replace("Officer ", ""),
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                        )
-                                    )
-                                }
-                            )
-                        }
                     }
                 }
             }
@@ -1169,7 +1183,7 @@ private fun N400PersonalDialoguesContent(
                             .fillMaxWidth()
                             .bounceClick()
                             .clip(RoundedCornerShape(12.dp))
-                            .clickable { ttsManager.speak(item.answerEn) }
+                            .clickable { ttsManager.speakUserAnswer(item.answerEn, profile.isMale) }
                     ) {
                         Row(
                             modifier = Modifier.padding(12.dp),
@@ -1194,7 +1208,7 @@ private fun N400PersonalDialoguesContent(
                                 )
                             }
                             IconButton(
-                                onClick = { ttsManager.speak(item.answerEn) },
+                                onClick = { ttsManager.speakUserAnswer(item.answerEn, profile.isMale) },
                                 modifier = Modifier.testTag("play_user_ans_${item.id}")
                             ) {
                                 Icon(Icons.Default.VolumeUp, contentDescription = "Listen to your answer", tint = MaterialTheme.colorScheme.primary)
@@ -1232,81 +1246,19 @@ private fun resolveOfficialSampleAnswer(
     rawAnswer: String,
     profile: N400PersonalProfile
 ): String {
-    return when (qId) {
-        3 -> {
-            val name = profile.fullName.ifBlank { "Applicant" }
-            "My full legal name is $name."
-        }
-        6 -> {
-            val dob = profile.dateOfBirth.ifBlank { "my date of birth" }
-            "My date of birth is $dob."
-        }
-        7 -> {
-            "I am ${profile.calculatedAge} years old."
-        }
-        8 -> {
-            val country = profile.countryOfBirth.ifBlank { "my country of birth" }
-            "I was born in $country."
-        }
-        9 -> {
-            val addr = profile.currentAddress.ifBlank { "my current address" }
-            "My address is $addr."
-        }
-        10 -> {
-            val yrs = profile.yearsAtCurrentAddress.ifBlank { "several" }
-            "I have lived there for $yrs years."
-        }
-        11 -> {
-            if (profile.fatherName.isNotBlank() && profile.motherName.isNotBlank()) {
-                "My father's name is ${profile.fatherName} and my mother's name is ${profile.motherName}."
-            } else if (profile.fatherName.isNotBlank()) {
-                "My father's name is ${profile.fatherName}."
-            } else if (profile.motherName.isNotBlank()) {
-                "My mother's name is ${profile.motherName}."
-            } else {
-                rawAnswer
-            }
-        }
-        14 -> {
-            if (profile.maritalStatus.equals("Married", ignoreCase = true)) {
-                val spName = profile.spouseName.ifBlank { "my spouse" }
-                val citText = if (profile.isSpouseUSCitizen) "yes, a U.S. citizen." else "a permanent resident."
-                "My spouse's name is $spName, and $citText"
-            } else {
-                rawAnswer
-            }
-        }
-        15, 16 -> {
-            val count = profile.numberOfChildren.toIntOrNull() ?: 0
-            if (count == 0) {
-                "No, officer, I do not have children."
-            } else if (profile.childrenNames.isNotBlank()) {
-                "I have $count children. Their names are ${profile.childrenNames}."
-            } else {
-                "I have $count children."
-            }
-        }
-        17 -> {
-            val job = profile.occupation.ifBlank { "employed" }
-            val emp = profile.employer.ifBlank { "my employer" }
-            "Yes, I work as a $job at $emp."
-        }
-        18 -> {
-            if (profile.tripsOutsideUS.isNotBlank() && !profile.tripsOutsideUS.equals("none", ignoreCase = true) && profile.tripsOutsideUS != "0") {
-                "Yes, officer. I took trips outside the United States: ${profile.tripsOutsideUS}."
-            } else {
-                "No, I have not left the United States in the last five years."
-            }
-        }
-        else -> {
-            rawAnswer
-                .replace("[Your Full Name]", profile.fullName.ifBlank { "Applicant" })
-                .replace("[Month] [Day], [Year]", profile.dateOfBirth.ifBlank { "my date of birth" })
-                .replace("[Age]", profile.calculatedAge.toString())
-                .replace("[Your Country of Birth]", profile.countryOfBirth.ifBlank { "my country of birth" })
-                .replace("[Street Number, Street Name, City, State, Zip Code]", profile.currentAddress.ifBlank { "my home address" })
-        }
-    }
+    val resolvedList = IntroductoryInterviewDataSource.resolvePersonalSampleAnswersEn(qId, profile)
+    val match = resolvedList.firstOrNull()
+    if (!match.isNullOrBlank() && !match.contains("[")) return match
+    return rawAnswer
+        .replace("[Your Full Name]", profile.fullName.ifBlank { "Carlos Eduardo Rodriguez" })
+        .replace("[Month] [Day], [Year]", profile.dateOfBirth.ifBlank { "March 15, 1985" })
+        .replace("[Age]", profile.calculatedAge.toString())
+        .replace("[Your Country of Birth]", profile.countryOfBirth.ifBlank { "Colombia" })
+        .replace("[Street Number, Street Name, City, State, Zip Code]", profile.currentAddress.ifBlank { "123 Main Street, Los Angeles, CA" })
+        .replace("[Number]", profile.yearsAtCurrentAddress.ifBlank { "5" })
+        .replace("[Name]", profile.spouseName.ifBlank { "Elena Gomez" })
+        .replace("[Job Title]", profile.occupation.ifBlank { "electrician" })
+        .replace("[Company Name]", profile.employer.ifBlank { "City Services" })
 }
 
 @Composable
@@ -1485,7 +1437,7 @@ private fun N400OfficialInterviewContent(
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
                                     .bounceClick()
-                                    .clickable { ttsManager.speak(resolvedAns) }
+                                    .clickable { ttsManager.speakUserAnswer(resolvedAns, profile.isMale) }
                             ) {
                                 Row(
                                     modifier = Modifier.padding(12.dp),
@@ -1498,7 +1450,14 @@ private fun N400OfficialInterviewContent(
                                         modifier = Modifier.weight(1f)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Icon(Icons.Default.VolumeUp, contentDescription = "Listen", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                                    Icon(
+                                        Icons.Default.VolumeUp,
+                                        contentDescription = "Listen",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier
+                                            .size(18.dp)
+                                            .clickable { ttsManager.speakUserAnswer(resolvedAns, profile.isMale) }
+                                    )
                                 }
                             }
                         }

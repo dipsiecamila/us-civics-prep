@@ -80,6 +80,26 @@ val AVAILABLE_OFFICER_VOICES = listOf(
         pitch = 1.22f,
         speed = 0.82f,
         locale = Locale.US
+    ),
+    OfficerVoice(
+        id = "officer_martinez",
+        displayName = "Officer Martinez",
+        description = "Female • Professional & Clear",
+        avatarEmoji = "👩‍💼",
+        isMale = false,
+        pitch = 1.18f,
+        speed = 0.88f,
+        locale = Locale.US
+    ),
+    OfficerVoice(
+        id = "officer_anderson",
+        displayName = "Officer Anderson",
+        description = "Male • Authoritative & Steady",
+        avatarEmoji = "👨‍✈️",
+        isMale = true,
+        pitch = 0.80f,
+        speed = 0.85f,
+        locale = Locale.US
     )
 )
 
@@ -160,8 +180,37 @@ class TtsManager(context: Context) : TextToSpeech.OnInitListener {
             "officer_jackson" -> "Good day. I am Officer Jackson. Please take your time and speak clearly."
             "officer_clark" -> "Hello there. I am Officer Clark. Let us begin your civics examination."
             "officer_taylor" -> "Hello and welcome. I am Officer Taylor. We will do great today."
+            "officer_martinez" -> "Good morning. I am Officer Martinez. I will guide you through your naturalization test."
+            "officer_anderson" -> "Good afternoon. I am Officer Anderson. Let us begin your citizenship exam."
             else -> "Hello, I am your USCIS officer. Ready for your test."
         }
+    }
+
+    /**
+     * Speaks the applicant's response matching their chosen gender (male or female).
+     */
+    fun speakUserAnswer(text: String, isMale: Boolean) {
+        if (!isInitialized) return
+        stop()
+        try {
+            tts?.setLanguage(Locale.US)
+            tts?.setPitch(if (isMale) 0.82f else 1.20f)
+            tts?.setSpeechRate(0.92f)
+            val voices = tts?.voices
+            if (!voices.isNullOrEmpty()) {
+                val matchingVoice = voices.firstOrNull { v ->
+                    v.locale.language == "en" &&
+                    if (isMale) v.name.contains("male", ignoreCase = true)
+                    else v.name.contains("female", ignoreCase = true)
+                }
+                if (matchingVoice != null) {
+                    tts?.voice = matchingVoice
+                }
+            }
+        } catch (_: Exception) {}
+        _currentlySpokenText.value = text
+        _isSpeaking.value = true
+        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "civics_user_ans_${System.currentTimeMillis()}")
     }
 
     fun setOfficerVoice(voice: OfficerVoice, playPreview: Boolean = false) {

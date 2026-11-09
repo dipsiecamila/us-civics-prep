@@ -157,6 +157,7 @@ fun MainApp(
             CivicsBottomNav(
                 currentRoute = currentScreen.route,
                 language = lang,
+                totalQuestions = civicsState.totalQuestions,
                 onNavigate = { screen ->
                     civicsViewModel.stopAudio()
                     if (screen == Screen.Flashcards) {

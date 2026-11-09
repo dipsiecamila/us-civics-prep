@@ -111,11 +111,19 @@ class CivicsViewModel(application: Application) : AndroidViewModel(application) 
     )
 
     fun setCategory(category: QuestionCategory?) {
-        _filterState.value = _filterState.value.copy(category = category)
+        _filterState.value = _filterState.value.copy(category = category, isStarredOnly = false)
+    }
+
+    fun setAll() {
+        _filterState.value = _filterState.value.copy(category = null, isStarredOnly = false)
     }
 
     fun toggleStarredFilter() {
-        _filterState.value = _filterState.value.copy(isStarredOnly = !_filterState.value.isStarredOnly)
+        val newStarred = !_filterState.value.isStarredOnly
+        _filterState.value = _filterState.value.copy(
+            isStarredOnly = newStarred,
+            category = if (newStarred) null else _filterState.value.category
+        )
     }
 
     fun toggleSenior6520Filter() {

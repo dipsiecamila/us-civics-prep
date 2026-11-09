@@ -182,6 +182,7 @@ class CivicsRepository(private val context: Context) {
 
     fun getN400Profile(): com.example.data.model.N400PersonalProfile {
         return com.example.data.model.N400PersonalProfile(
+            gender = prefs.getString("n400_gender", "Male") ?: "Male",
             fullName = prefs.getString("n400_fullName", "") ?: "",
             age = prefs.getString("n400_age", "") ?: "",
             dateOfBirth = prefs.getString("n400_dateOfBirth", "") ?: "",
@@ -193,6 +194,7 @@ class CivicsRepository(private val context: Context) {
             isMotherUSCitizen = prefs.getBoolean("n400_isMotherUSCitizen", false),
             maritalStatus = prefs.getString("n400_maritalStatus", "Married") ?: "Married",
             spouseName = prefs.getString("n400_spouseName", "") ?: "",
+            isSpouseUSCitizen = prefs.getBoolean("n400_isSpouseUSCitizen", false),
             numberOfChildren = prefs.getString("n400_numberOfChildren", "") ?: "",
             childrenNames = prefs.getString("n400_childrenNames", "") ?: "",
             currentAddress = prefs.getString("n400_currentAddress", "") ?: "",
@@ -212,6 +214,7 @@ class CivicsRepository(private val context: Context) {
         val stateCode = profile.residenceStateCode.ifBlank { "CA" }
 
         prefs.edit()
+            .putString("n400_gender", profile.gender)
             .putString("n400_fullName", profile.fullName)
             .putString("n400_age", profile.age)
             .putString("n400_dateOfBirth", profile.dateOfBirth)
@@ -223,6 +226,7 @@ class CivicsRepository(private val context: Context) {
             .putBoolean("n400_isMotherUSCitizen", profile.isMotherUSCitizen)
             .putString("n400_maritalStatus", profile.maritalStatus)
             .putString("n400_spouseName", profile.spouseName)
+            .putBoolean("n400_isSpouseUSCitizen", profile.isSpouseUSCitizen)
             .putString("n400_numberOfChildren", profile.numberOfChildren)
             .putString("n400_childrenNames", profile.childrenNames)
             .putString("n400_currentAddress", profile.currentAddress)

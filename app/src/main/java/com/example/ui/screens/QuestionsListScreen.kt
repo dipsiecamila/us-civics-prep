@@ -142,11 +142,11 @@ fun QuestionsListScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterChip(
-                    selected = uiState.selectedCategory == null && !uiState.isStarredOnly && !uiState.isSenior6520Only,
+                    selected = uiState.selectedCategory == null && !uiState.isStarredOnly,
                     onClick = {
                         onSelectCategory(null)
                     },
-                    label = { Text("All (100)") },
+                    label = { Text("All (${uiState.totalQuestions})") },
                     modifier = Modifier.testTag("filter_all")
                 )
 

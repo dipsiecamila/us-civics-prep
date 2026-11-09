@@ -266,4 +266,126 @@ object IntroductoryInterviewDataSource {
             keywordsToListenFor = listOf("oath of allegiance", "willing", "take")
         )
     )
+
+    fun resolvePersonalSampleAnswersEn(questionId: Int, profile: com.example.data.model.N400PersonalProfile): List<String> {
+        val q = questions.firstOrNull { it.id == questionId } ?: return emptyList()
+        val nameVal = profile.fullName.ifBlank { "Carlos Eduardo Rodriguez" }
+        val ageVal = profile.calculatedAge.toString()
+        val dobVal = profile.dateOfBirth.ifBlank { "March 15, 1985" }
+        val cityVal = profile.cityOfBirth.ifBlank { "Bogota" }
+        val countryVal = profile.countryOfBirth.ifBlank { "Colombia" }
+        val statusVal = profile.maritalStatus.ifBlank { "Married" }
+        val spouseVal = profile.spouseName.ifBlank { "Elena Gomez" }
+        val fatherVal = profile.fatherName.ifBlank { "Juan Carlos Rodriguez" }
+        val motherVal = profile.motherName.ifBlank { "Maria Elena Rodriguez" }
+        val childrenCount = profile.numberOfChildren.toIntOrNull() ?: 0
+        val childrenVal = profile.childrenNames.ifBlank { "David and Sofia" }
+        val addressVal = profile.currentAddress.ifBlank { "123 Main Street, Los Angeles, CA" }
+        val addressYears = profile.yearsAtCurrentAddress.ifBlank { "5" }
+        val jobVal = profile.occupation.ifBlank { "technician" }
+        val employerVal = profile.employer.ifBlank { "City Services" }
+        val tripsVal = profile.tripsOutsideUS.ifBlank { "none" }
+
+        return when (questionId) {
+            3 -> listOf("My full legal name is $nameVal.")
+            4 -> listOf("No, officer. I have only used my legal name.")
+            5 -> listOf("No, thank you. I want to keep my current legal name.")
+            6 -> listOf("My date of birth is $dobVal.")
+            7 -> listOf("I am $ageVal years old.")
+            8 -> listOf("I was born in $cityVal, $countryVal.")
+            9 -> listOf("My address is $addressVal.")
+            10 -> listOf("I have lived there for $addressYears years.")
+            11 -> listOf("My father's name is $fatherVal and my mother's name is $motherVal.")
+            12 -> if (profile.isFatherUSCitizen || profile.isMotherUSCitizen) {
+                listOf("Yes, my parents are U.S. citizens.")
+            } else {
+                listOf("No, officer, neither of them.")
+            }
+            13 -> listOf("I am currently $statusVal.")
+            14 -> if (statusVal.equals("Married", ignoreCase = true)) {
+                val citizenNotice = if (profile.isSpouseUSCitizen) "and yes, my spouse is a U.S. citizen." else "and my spouse is a permanent resident."
+                listOf("My spouse's name is $spouseVal, $citizenNotice")
+            } else {
+                listOf("I am not married, officer.")
+            }
+            15 -> if (childrenCount == 0) {
+                listOf("No, officer, I do not have children.")
+            } else {
+                listOf("Yes, I have $childrenCount children.")
+            }
+            16 -> if (childrenCount == 0) {
+                listOf("I do not have any children, officer.")
+            } else {
+                listOf("I have $childrenCount children. Their names are $childrenVal.")
+            }
+            17 -> listOf("Yes, I work as an $jobVal at $employerVal.")
+            18 -> if (tripsVal.equals("none", true) || tripsVal == "0") {
+                listOf("No, I have not left the United States in the last five years.")
+            } else {
+                listOf("Yes, I took trips outside the United States: $tripsVal.")
+            }
+            else -> q.sampleAnswersEn
+        }
+    }
+
+    fun resolvePersonalSampleAnswersEs(questionId: Int, profile: com.example.data.model.N400PersonalProfile): List<String> {
+        val q = questions.firstOrNull { it.id == questionId } ?: return emptyList()
+        val nameVal = profile.fullName.ifBlank { "Carlos Eduardo Rodriguez" }
+        val ageVal = profile.calculatedAge.toString()
+        val dobVal = profile.dateOfBirth.ifBlank { "15 de marzo de 1985" }
+        val cityVal = profile.cityOfBirth.ifBlank { "Bogotá" }
+        val countryVal = profile.countryOfBirth.ifBlank { "Colombia" }
+        val statusVal = profile.maritalStatus.ifBlank { "Casado" }
+        val spouseVal = profile.spouseName.ifBlank { "Elena Gómez" }
+        val fatherVal = profile.fatherName.ifBlank { "Juan Carlos Rodríguez" }
+        val motherVal = profile.motherName.ifBlank { "María Elena Rodríguez" }
+        val childrenCount = profile.numberOfChildren.toIntOrNull() ?: 0
+        val childrenVal = profile.childrenNames.ifBlank { "David y Sofia" }
+        val addressVal = profile.currentAddress.ifBlank { "123 Main Street" }
+        val addressYears = profile.yearsAtCurrentAddress.ifBlank { "5" }
+        val jobVal = profile.occupation.ifBlank { "técnico" }
+        val employerVal = profile.employer.ifBlank { "la empresa" }
+        val tripsVal = profile.tripsOutsideUS.ifBlank { "ninguno" }
+
+        return when (questionId) {
+            3 -> listOf("Mi nombre legal completo es $nameVal.")
+            4 -> listOf("No, oficial. Únicamente mi nombre legal.")
+            5 -> listOf("No, gracias. Deseo mantener mi nombre actual.")
+            6 -> listOf("Mi fecha de nacimiento es $dobVal.")
+            7 -> listOf("Tengo $ageVal años.")
+            8 -> listOf("Nací en $cityVal, $countryVal.")
+            9 -> listOf("Mi dirección es $addressVal.")
+            10 -> listOf("He vivido allí durante $addressYears años.")
+            11 -> listOf("El nombre de mi padre es $fatherVal y el de mi madre es $motherVal.")
+            12 -> if (profile.isFatherUSCitizen || profile.isMotherUSCitizen) {
+                listOf("Sí, mis padres son ciudadanos estadounidenses.")
+            } else {
+                listOf("No, oficial, ninguno de ellos.")
+            }
+            13 -> listOf("Actualmente estoy $statusVal.")
+            14 -> if (statusVal.equals("Married", ignoreCase = true) || statusVal.equals("Casado", ignoreCase = true)) {
+                val citizenNotice = if (profile.isSpouseUSCitizen) "y sí, es ciudadano/a estadounidense." else "y es residente permanente legal."
+                listOf("El nombre de mi cónyuge es $spouseVal $citizenNotice")
+            } else {
+                listOf("No estoy casado/a, oficial.")
+            }
+            15 -> if (childrenCount == 0) {
+                listOf("No, oficial, no tengo hijos.")
+            } else {
+                listOf("Sí, tengo $childrenCount hijos.")
+            }
+            16 -> if (childrenCount == 0) {
+                listOf("No tengo hijos, oficial.")
+            } else {
+                listOf("Tengo $childrenCount hijos. Sus nombres son $childrenVal.")
+            }
+            17 -> listOf("Sí, trabajo como $jobVal en $employerVal.")
+            18 -> if (tripsVal.equals("none", true) || tripsVal.equals("ninguno", true) || tripsVal == "0") {
+                listOf("No, no he salido de los Estados Unidos en los últimos cinco años.")
+            } else {
+                listOf("Sí, realicé viajes fuera de EE. UU.: $tripsVal.")
+            }
+            else -> q.sampleAnswersEs
+        }
+    }
 }

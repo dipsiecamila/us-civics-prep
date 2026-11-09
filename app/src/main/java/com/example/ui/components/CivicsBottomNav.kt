@@ -37,6 +37,7 @@ data class NavItem(
 fun CivicsBottomNav(
     currentRoute: String,
     language: AppLanguage,
+    totalQuestions: Int = 100,
     onNavigate: (Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -57,7 +58,7 @@ fun CivicsBottomNav(
         ),
         NavItem(
             screen = Screen.QuestionsList,
-            title = AppStrings.navQuestions(language),
+            title = AppStrings.navQuestions(language, totalQuestions),
             selectedIcon = Icons.Filled.Assignment,
             unselectedIcon = Icons.Outlined.Assignment,
             testTag = "nav_questions"
